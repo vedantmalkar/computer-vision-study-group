@@ -14,7 +14,7 @@ def gradient_check(loss_fn, W, X, y, reg, num_of_checks=10, h=0.00001):
     print("-----------------------------------------------------------------------------------------------")
 
     for i in range(num_of_checks):
-        ix = tuple([np.random.randint(3073), np.random.randint(10)])            
+        ix = (np.random.randint(W.shape[0]), np.random.randint(W.shape[1]))            
 
         grad_analytic_val = grad_analytic[ix]
 
@@ -46,15 +46,15 @@ def main():
     from data_utils import load_CIFAR_10, preprocess_data
     
     print("Initialized CIFAR data set")
-    X_train, y_train, _, _ = load_CIFAR_10('cifar-10-batches-py')
-    X_train, y_train, _, _ = preprocess_data(X_train, y_train, X_train[:10], y_train[:10])
+    X_train, y_train, X_test, y_test = load_CIFAR_10('cifar-10-batches-py')
+    X_train, y_train, X_test, y_test = preprocess_data(X_train, y_train, X_test, y_test)    
 
     X_small = X_train[:20]
     y_small = y_train[:20]
     
     print(f"Using {X_small.shape[0]} examples for gradient check")
 
-    W = np.random.randn(3073, 10) * 0.001
+    W = np.random.randn(X_small.shape[1], 10) * 0.001
     reg = 0.0 
 
     print("-----------------------------------------------------------------")

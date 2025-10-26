@@ -5,9 +5,14 @@ import os
 def load_batch(file):
     with open(file, 'rb') as fo:
         data_dict = pickle.load(fo, encoding='bytes')
-        X = data_dict[b'data']       #shape is (10000, 3072)
-        Y = data_dict[b'labels']     
-        X = X.reshape(10000, 3, 32, 32).astype("float")
+        if b'data' in data_dict:
+            X = data_dict[b'data']       #shape is (10000, 3072)
+            Y = data_dict[b'labels'] 
+        else:
+            X = data_dict['data']
+            Y = data_dict['labels']
+        batch_size = X.shape[0]    
+        X = X.reshape(batch_size, 3, 32, 32).astype("float")
         Y = np.array(Y)
     return X,Y
 
@@ -25,8 +30,8 @@ def load_CIFAR_10(root):
     return X_train, Y_train, X_test, Y_test
 
 def preprocess_data(X_train, Y_train, X_test, Y_test):
-    X_train = X_train.reshape(X_train.shape[0], -1).astype(np.float64) #flatten
-    X_test = X_test.reshape(X_test.shape[0], -1).astype(np.float64)
+    X_train = X_train.reshape(X_train.shape[0], -1).astype(np.float32) #flatten
+    X_test = X_test.reshape(X_test.shape[0], -1).astype(np.float32)
     
     mean_image = np.mean(X_train, axis=0)
     X_train -= mean_image   # highlights diffrence b/w imgs
